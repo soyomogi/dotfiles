@@ -5,8 +5,10 @@ ln -s $GITDIR/.bash_profile $HOME/.bash_profile
 
 # vim
 ln -s $GITDIR/.vimrc $HOME/.vimrc
-mkdir -r $HOME/.vim/colors
-cd $HOME/.vim/colors wget https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim
+mkdir -p $HOME/.vim/colors
+if [ ! -e $HOME/.vim/colors/molokai.vim ]; then
+  curl https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim > $HOME/.vim/colors/molokai.vim
+fi
 
 # other
 ln -s $GITDIR/.screenrc $HOME/.screenrc
