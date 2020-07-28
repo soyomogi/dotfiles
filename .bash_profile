@@ -49,9 +49,6 @@ elif [ ! -L "$SSH_AUTH_SOCK" ]; then
     ln -snf "$SSH_AUTH_SOCK" $AUTH_SOCK && export SSH_AUTH_SOCK=$AUTH_SOCK
 fi
 
-# git-completion
-source ~/git-completion.bash
-
 # lscolor
 export LSCOLORS=gxfxcxdxbxegedabagacad
 alias ls='ls -G'
