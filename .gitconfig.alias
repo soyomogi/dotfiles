@@ -1,0 +1,19 @@
+[alias]
+  graph = log --graph --date-order -C -M --pretty=format:\"<%h> %ad [%an] %Cgreen%d%Creset %s\" --all --date=short
+  alias = !git config --get-regexp '^alias\\.' | sed 's/alias\\.\\([^ ]*\\) \\(.*\\)/\\1\\\t => \\2/' | sort
+  g = !git graph
+  l = log --graph --branches --pretty=format:'%C(yellow)%h%C(cyan)%d%Creset %s %C(green)- %an, %cr%Creset'
+  b = branch
+  ch = checkout
+  p = pull
+  cm = commit
+  st = status
+  del = branch -D
+  new = checkout -b
+  refresh = !git fetch origin && git remote prune origin
+  re = !git refresh
+  d = diff
+  d1 = d HEAD~
+  d2 = d HEAD~2
+  d3 = d HEAD~3
+  dd = !git difftool --tool=vidiff --no-prompt
