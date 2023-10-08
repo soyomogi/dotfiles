@@ -1,3 +1,4 @@
+rm -rf "${ZDOTDIR:-$HOME}/.zprezto"
 git clone --recursive https://github.com/soyomogi/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
 
 setopt EXTENDED_GLOB
