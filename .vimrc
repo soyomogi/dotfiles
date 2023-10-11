@@ -42,11 +42,16 @@ nnoremap j gj
 nnoremap k gk
 
 " molokai
-colorscheme molokai
+" colorscheme molokai
+" syntax on
+" let g:molokai_original = 1
+" let rehash256 = 1
+" set background=dark
+
+" fairyfloss
+colorscheme fairyfloss
 syntax on
-let g:molokai_original = 1
-let rehash256 = 1
-set background=dark
+set termguicolors
 
 " Tab系
 " 不可視文字を可視化(タブが「>-」と表示される)
