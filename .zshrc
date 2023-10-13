@@ -62,6 +62,7 @@ zinit snippet PZTM::utility
 export SCREENDIR=$HOME/.screen
 
 # change ls colors
+alias ls="ls -G"
 export LSCOLORS=exfxcxdxbxegedabagacad
 
 # my alias
