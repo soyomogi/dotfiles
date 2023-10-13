@@ -36,9 +36,6 @@ elif [ ! -L "$SSH_AUTH_SOCK" ]; then
   ln -snf "$SSH_AUTH_SOCK" $AUTH_SOCK && export SSH_AUTH_SOCK=$AUTH_SOCK
 fi
 
-# starship
-eval "$(starship init zsh)"
-
 ## コマンド補完
 zinit ice wait'0'; zinit light zsh-users/zsh-completions
 autoload -Uz compinit && compinit
@@ -52,10 +49,6 @@ zstyle ':completion:*:default' menu select=1
 ## シンタックスハイライト
 zinit light zsh-users/zsh-syntax-highlighting
 
-# alias
-alias ls="ls --color=auto"
-alias ll="ls -l"
-
 ## 履歴補完
 zinit light zsh-users/zsh-autosuggestions
 
@@ -63,10 +56,35 @@ zinit light zsh-users/zsh-autosuggestions
 zinit snippet OMZL::git.zsh
 zinit snippet OMZP::git
 zinit snippet PZTM::helper
+zinit snippet PZTM::utility
+
+# screen
+export SCREENDIR=$HOME/.screen
+
+# change ls colors
+export LSCOLORS=exfxcxdxbxegedabagacad
 
 # my alias
 alias gfre='git fetch origin && git remote prune origin'
 
 # auto tmux
-zinit snippet PZTM::tmux
+if [[ ! -n $TMUX && $- == *l* ]]; then
+  # get the IDs
+  ID="`tmux list-sessions`"
+  if [[ -z "$ID" ]]; then
+    tmux new-session
+  fi
+  create_new_session="Create New Session"
+  ID="$ID\n${create_new_session}:"
+  ID="`echo $ID | $PERCOL | cut -d: -f1`"
+  if [[ "$ID" = "${create_new_session}" ]]; then
+    tmux new-session
+  elif [[ -n "$ID" ]]; then
+    tmux attach-session -t "$ID"
+  else
+    :  # Start terminal normally
+  fi
+fi
 
+# starship
+eval "$(starship init zsh)"
