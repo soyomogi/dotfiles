@@ -68,6 +68,7 @@ export LSCOLORS=exfxcxdxbxegedabagacad
 # my alias
 alias gfre='git fetch origin && git remote prune origin'
 alias gfm='git pull'
+alias gbc='gbm'
 
 # auto tmux
 if [[ ! -n $TMUX && $- == *l* ]]; then
