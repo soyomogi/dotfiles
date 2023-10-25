@@ -53,10 +53,9 @@ zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-autosuggestions
 
 ## 先人の知恵
-zinit snippet OMZL::git.zsh
-zinit snippet OMZP::git
 zinit snippet PZTM::helper
 zinit snippet PZTM::utility
+zinit snippet PZT::modules/git/alias.zsh
 
 # screen
 export SCREENDIR=$HOME/.screen
@@ -67,8 +66,8 @@ export LSCOLORS=exfxcxdxbxegedabagacad
 
 # my alias
 alias gfre='git fetch origin && git remote prune origin'
-alias gfm='git pull'
-alias gbc='gbm'
+alias gpc='git push --set-upstream origin "$(git branch --contains | cut -d " " -f 2)"'
+alias gpp='git pull origin "$(git branch --contains | cut -d " " -f 2)" && git push origin "$(git branch --contains | cut -d " " -f 2)"'
 
 # auto tmux
 if [[ ! -n $TMUX && $- == *l* ]]; then
