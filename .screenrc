@@ -14,7 +14,7 @@ defbce on
 term xterm-256color
 
 # ステータスライン
-hardstatus alwayslastline "%{= kw}%02c:%s %{= .y}$HOSTNAME %L=%{= .m}%-w%46>%{= .r}%n %t*%{= .m}%+w%-16=%{= .y}[%l]"
+hardstatus alwayslastline "%{= mw}%02c:%s %{= .y}$HOSTNAME %L=%{= .k}%-w%46>%{= .r}%n %t*%{= .k}%+w%-16=%{= .y}[%l]"
 
 # エスケープキー
 escape ^Tt
