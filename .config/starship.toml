@@ -14,6 +14,7 @@ $elm\
 $golang\
 $gradle\
 $haskell\
+$python\
 $java\
 $julia\
 $nodejs\
@@ -107,6 +108,11 @@ symbol = " "
 style = "bg:#c1ffff"
 format = '[ $symbol ($version) ]($style)'
 
+[python]
+symbol = ""
+style = "bg:#c1ffff"
+format = '[ $symbol ($version) ($virtualenv) ]($style)'
+
 [java]
 symbol = " "
 style = "bg:#c1ffff"
@@ -141,4 +147,4 @@ format = '[ $symbol ($version) ]($style)'
 disabled = false
 time_format = "%R" # Hour:Minute Format
 style = "bg:#c1e0ff"
-format = '[  $time ]($style)'
+format = '[🌻 $time ]($style)'
