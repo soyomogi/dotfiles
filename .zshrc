@@ -76,14 +76,16 @@ eval "$(pyenv init --path)"
 
 # auto tmux (obsidian)
 if [[ "$__CFBundleIdentifier" == "md.obsidian" ]]; then
-  source ~/.zprofile
-  SESSION_NAME="obsidian"
-  if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
-    tmux attach-session -t "$SESSION_NAME"
-  else
-    tmux new-session -s "$SESSION_NAME"
+  # Check if we are already in a tmux session
+  if [ -z "$TMUX" ]; then
+    source ~/.zprofile
+    SESSION_NAME="obsidian"
+    if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+      tmux attach-session -t "$SESSION_NAME"
+    else
+      tmux new-session -s "$SESSION_NAME" -c ~
+    fi
   fi
-  exec $SHELL
 fi
 
 # starship
