@@ -69,24 +69,17 @@ alias gfre='git fetch origin && git remote prune origin'
 alias gpc='git push --set-upstream origin "$(git branch --contains | cut -d " " -f 2)"'
 alias gpp='git pull origin "$(git branch --contains | cut -d " " -f 2)" && git push origin "$(git branch --contains | cut -d " " -f 2)"'
 
-# auto tmux
-#if [[ ! -n $TMUX && $- == *l* ]]; then
-#  # get the IDs
-#  ID="`tmux list-sessions`"
-#  if [[ -z "$ID" ]]; then
-#    tmux new-session
-#  fi
-#  create_new_session="Create New Session"
-#  ID="$ID\n${create_new_session}:"
-#  ID="`echo $ID | $PERCOL | cut -d: -f1`"
-#  if [[ "$ID" = "${create_new_session}" ]]; then
-#    tmux new-session
-#  elif [[ -n "$ID" ]]; then
-#    tmux attach-session -t "$ID"
-#  else
-#    :  # Start terminal normally
-#  fi
-#fi
+# auto tmux (obsidian)
+if [[ "$__CFBundleIdentifier" == "md.obsidian" ]]; then
+  source ~/.zprofile
+  SESSION_NAME="obsidian"
+  if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+    tmux attach-session -t "$SESSION_NAME"
+  else
+    tmux new-session -s "$SESSION_NAME"
+  fi
+  exec $SHELL
+fi
 
 # starship
 eval "$(starship init zsh)"
