@@ -1,3 +1,5 @@
+source ~/.zprofile
+
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
     print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
@@ -69,17 +71,32 @@ alias gfre='git fetch origin && git remote prune origin'
 alias gpc='git push --set-upstream origin "$(git branch --contains | cut -d " " -f 2)"'
 alias gpp='git pull origin "$(git branch --contains | cut -d " " -f 2)" && git push origin "$(git branch --contains | cut -d " " -f 2)"'
 
-# pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
+get_obsidian_workspace() {
+  # 環境に合わせてobsidianのworkspaces.jsonへのパスを設定
+  WORKSPACES_JSON="${OBSIDIAN_ROOT}/.obsidian/workspaces.json"
+
+  # ファイルが存在するか確認
+  if [ -f "$WORKSPACES_JSON" ]; then
+    # jqを使ってactiveなワークスペース名を抽出
+    if command -v jq &> /dev/null; then
+      WORKSPACE=$(jq -r '.active' "$WORKSPACES_JSON" 2>/dev/null)
+      echo "$WORKSPACE"
+    else
+      # jqがない場合はgrepとsedで抽出を試みる
+      WORKSPACE=$(grep -o '"active[[:space:]]*:[[:space:]]*"[^"]*"' "$WORKSPACES_JSON" | sed 's/"active"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
+      echo "$WORKSPACE"
+    fi
+  else
+    echo "unknown"
+  fi
+}
 
 # auto tmux (obsidian)
 if [[ "$__CFBundleIdentifier" == "md.obsidian" ]]; then
   # Check if we are already in a tmux session
   if [ -z "$TMUX" ]; then
     source ~/.zprofile
-    SESSION_NAME="obsidian"
+    SESSION_NAME=$(get_obsidian_workspace)
     if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
       tmux attach-session -t "$SESSION_NAME"
     else
