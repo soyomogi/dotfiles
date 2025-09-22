@@ -3,8 +3,12 @@ return {
   lazy = false,
   priority = 1000,
   init = function()
-    vim.api.nvim_set_hl(0, "SnacksTerminal", { bg = "#ffe5f3", fg = "#3b2f4a" })
-    vim.api.nvim_set_hl(0, "SnacksTerminalBorder", { bg = "#ffe5f3", fg = "#ffe5f3" })
+    vim.api.nvim_create_autocmd("ColorScheme", {
+      callback = function()
+        vim.api.nvim_set_hl(0, "SnacksTerminal", { bg = "#ffe5f3", fg = "#3b2f4a" })
+        vim.api.nvim_set_hl(0, "SnacksTerminalBorder", { bg = "#ffe5f3", fg = "#ffe5f3" })
+      end,
+    })
   end,
   opts = {
     picker = {
