@@ -1,4 +1,3 @@
 *.log
 *.swp
 .DS_store
-lazy-lock.json
