@@ -22,7 +22,7 @@ fi
 
 # neovim
 rm $HOME/.config/nvim
-ln -s $GITDIR/.config/nvim $HOME/nvim
+ln -s $GITDIR/.config/nvim $HOME/.config/nvim
 
 # other
 rm $HOME/.screenrc
