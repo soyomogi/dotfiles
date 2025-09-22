@@ -12,8 +12,17 @@ return {
   end,
   opts = {
     picker = {
+      ignored = false,
+      hidden = true,
       source = {
-        explorer = { hidden = true },
+        files = {
+          ignored = false,
+          hidden = true,
+        },
+        explorer = {
+          ignored = false,
+          hidden = true,
+        },
       },
     },
     terminal = {
