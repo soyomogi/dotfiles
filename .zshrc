@@ -92,7 +92,8 @@ get_obsidian_workspace() {
 }
 
 # auto tmux (obsidian)
-if [[ "$__CFBundleIdentifier" == "md.obsidian" ]]; then
+# macOSでは __CFBundleIdentifier を、それ以外ではユーザーが設定する環境変数 OBSIDIAN_TERMINAL で判定
+if [[ "$__CFBundleIdentifier" == "md.obsidian" || "$OBSIDIAN_TERMINAL" == "true" ]]; then
   # Check if we are already in a tmux session
   if [ -z "$TMUX" ]; then
     source ~/.zprofile
