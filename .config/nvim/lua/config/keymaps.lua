@@ -1,3 +1,9 @@
--- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
+local snacks = require("snacks")
+
+-- デフォルト無効化
+vim.keymap.del("n", "<space><space>")
+
+-- 挙動再設定
+vim.keymap.set("n", "<space><space>", function()
+  snacks.picker.git_files()
+end, { desc = "Find Git Files" })
