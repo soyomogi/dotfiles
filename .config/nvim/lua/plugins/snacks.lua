@@ -14,6 +14,7 @@ return {
     picker = {
       ignored = false,
       hidden = true,
+      layout = "ivy_split",
       source = {
         files = {
           ignored = false,
