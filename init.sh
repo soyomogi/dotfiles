@@ -1,31 +1,49 @@
-GITDIR=$HOME/git/dotfiles
-# bash
-rm $HOME/.bashrc
-ln -s $GITDIR/.bashrc $HOME/.bashrc
-rm $HOME/.bash_profile
-ln -s $GITDIR/.bash_profile $HOME/.bash_profile
+#!/usr/bin/env bash
+set -eu
 
-# zsh
-rm $HOME/.zshrc
-ln -s $GITDIR/.zshrc $HOME/.zshrc
+# ====== 設定 ======
+GITDIR="${GITDIR:-"$HOME/git/dotfiles"}"
 
-# vim
-rm $HOME/.vimrc
-ln -s $GITDIR/.vimrc $HOME/.vimrc
-mkdir -p $HOME/.vim/colors
-if [ ! -e $HOME/.vim/colors/molokai.vim ]; then
-  curl https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim >$HOME/.vim/colors/molokai.vim
-fi
-if [ ! -e $HOME/.vim/colors/fairyfloss.vim ]; then
-  curl https://raw.githubusercontent.com/tssm/fairyfloss.vim/master/colors/fairyfloss.vim >$HOME/.vim/colors/fairyfloss.vim
-fi
+# 置き場
+CFG="$HOME/.config"
+NVIM="$CFG/nvim"
+LGIT="$CFG/lazygit"
+VIM="$HOME/.vim"
+VCOL="$VIM/colors"
 
-# neovim
-rm $HOME/.config/nvim
-ln -s $GITDIR/.config/nvim $HOME/.config/nvim
+# ====== 関数 ======
+# link <dst> <src>
+link() {
+  rm -rf "$1"
+  mkdir -p "$(dirname "$1")"
+  ln -s "$2" "$1"
+  printf 'link: %s -> %s\n' "$1" "$2"
+}
 
-# other
-rm $HOME/.screenrc
-ln -s $GITDIR/.screenrc $HOME/.screenrc
-rm $HOME/.tmux.conf
-ln -s $GITDIR/.tmux.conf $HOME/.tmux.conf
+# fetch_if_missing <url> <dst>
+fetch_if_missing() {
+  [ -e "$2" ] && return 0
+  mkdir -p "$(dirname "$2")"
+  curl -fsSL "$1" -o "$2"
+  printf 'get : %s\n' "$2"
+}
+
+# ====== 実行 ======
+# zsh / vim / screen / tmux
+link "$HOME/.zshrc" "$GITDIR/.zshrc"
+link "$HOME/.vimrc" "$GITDIR/.vimrc"
+link "$HOME/.screenrc" "$GITDIR/.screenrc"
+link "$HOME/.tmux.conf" "$GITDIR/.tmux.conf"
+
+# neovim / lazygit
+link "$NVIM" "$GITDIR/.config/nvim"
+link "$LGIT" "$GITDIR/.config/lazygit"
+
+# vim カラースキーム
+mkdir -p "$VCOL"
+fetch_if_missing "https://raw.githubusercontent.com/tomasr/molokai/master/colors/molokai.vim" \
+  "$VCOL/molokai.vim"
+fetch_if_missing "https://raw.githubusercontent.com/tssm/fairyfloss.vim/master/colors/fairyfloss.vim" \
+  "$VCOL/fairyfloss.vim"
+
+printf 'done\n'
