@@ -91,18 +91,25 @@ get_obsidian_workspace() {
   fi
 }
 
-# auto tmux (obsidian)
+# auto tmux (obsidian) herdr使用のためコメントアウト
 # macOSでは __CFBundleIdentifier を、それ以外ではユーザーが設定する環境変数 OBSIDIAN_TERMINAL で判定
+# if [[ "$__CFBundleIdentifier" == "md.obsidian" || "$OBSIDIAN_TERMINAL" == "true" ]]; then
+#   # Check if we are already in a tmux session
+#   if [ -z "$TMUX" ]; then
+#     source ~/.zprofile
+#     SESSION_NAME=$(get_obsidian_workspace)
+#     if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+#       tmux attach-session -t "$SESSION_NAME"
+#     else
+#       tmux new-session -s "$SESSION_NAME" -c ~
+#     fi
+#   fi
+# fi
+
+# auto herdr
 if [[ "$__CFBundleIdentifier" == "md.obsidian" || "$OBSIDIAN_TERMINAL" == "true" ]]; then
-  # Check if we are already in a tmux session
-  if [ -z "$TMUX" ]; then
-    source ~/.zprofile
-    SESSION_NAME=$(get_obsidian_workspace)
-    if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
-      tmux attach-session -t "$SESSION_NAME"
-    else
-      tmux new-session -s "$SESSION_NAME" -c ~
-    fi
+  if [ -z "$HERDR_ENV" ]; then
+    herdr
   fi
 fi
 
