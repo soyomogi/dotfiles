@@ -113,5 +113,19 @@ if [[ "$__CFBundleIdentifier" == "md.obsidian" || "$OBSIDIAN_TERMINAL" == "true"
   fi
 fi
 
+# herdr tab context
+if [[ -n "$HERDR_PANE_ID" ]]; then
+  _herdr_tab_id=$(herdr pane get "$HERDR_PANE_ID" 2>/dev/null | jq -r '.result.pane.tab_id // ""')
+  export HERDR_TAB_ID="$_herdr_tab_id"
+  export HERDR_TAB_NAME=$(herdr tab get "$_herdr_tab_id" 2>/dev/null | jq -r '.result.tab.label // ""')
+  unset _herdr_tab_id
+fi
+
+function _herdr_refresh_tab_name() {
+  [[ -z "$HERDR_TAB_ID" ]] && return
+  HERDR_TAB_NAME=$(herdr tab get "$HERDR_TAB_ID" 2>/dev/null | jq -r '.result.tab.label // ""')
+}
+precmd_functions+=(_herdr_refresh_tab_name)
+
 # starship
 eval "$(starship init zsh)"
