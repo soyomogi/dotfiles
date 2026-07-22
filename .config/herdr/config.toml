@@ -1,0 +1,8 @@
+onboarding = false
+
+[theme]
+name = "rose-pine"
+
+[keys]
+next_agent = "ctrl+alt+down"
+previous_agent = "ctrl+alt+up"

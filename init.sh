@@ -8,6 +8,8 @@ GITDIR="${GITDIR:-"$HOME/git/dotfiles"}"
 CFG="$HOME/.config"
 NVIM="$CFG/nvim"
 LGIT="$CFG/lazygit"
+STARSHIP="$CFG/starship.toml"
+HERDR="$CFG/herdr"
 VIM="$HOME/.vim"
 VCOL="$VIM/colors"
 
@@ -35,9 +37,11 @@ link "$HOME/.vimrc" "$GITDIR/.vimrc"
 link "$HOME/.screenrc" "$GITDIR/.screenrc"
 link "$HOME/.tmux.conf" "$GITDIR/.tmux.conf"
 
-# neovim / lazygit
+# neovim / lazygit / starship / herdr
 link "$NVIM" "$GITDIR/.config/nvim"
 link "$LGIT" "$GITDIR/.config/lazygit"
+link "$STARSHIP" "$GITDIR/.config/starship.toml"
+link "$HERDR/config.toml" "$GITDIR/.config/herdr/config.toml"
 
 # vim カラースキーム
 mkdir -p "$VCOL"
