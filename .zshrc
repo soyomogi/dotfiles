@@ -67,6 +67,7 @@ alias ls="ls -G"
 export LSCOLORS=exfxcxdxbxegedabagacad
 
 # my alias
+alias lg='lazygit'
 alias gfre='git fetch origin && git remote prune origin'
 alias gpc='git push --set-upstream origin "$(git branch --contains | cut -d " " -f 2)"'
 alias gpp='git pull origin "$(git branch --contains | cut -d " " -f 2)" && git push origin "$(git branch --contains | cut -d " " -f 2)"'
