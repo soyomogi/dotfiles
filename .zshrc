@@ -72,61 +72,35 @@ alias gfre='git fetch origin && git remote prune origin'
 alias gpc='git push --set-upstream origin "$(git branch --contains | cut -d " " -f 2)"'
 alias gpp='git pull origin "$(git branch --contains | cut -d " " -f 2)" && git push origin "$(git branch --contains | cut -d " " -f 2)"'
 
-get_obsidian_workspace() {
-  # 環境に合わせてobsidianのworkspaces.jsonへのパスを設定
-  WORKSPACES_JSON="${OBSIDIAN_ROOT}/.obsidian/workspaces.json"
-
-  # ファイルが存在するか確認
-  if [ -f "$WORKSPACES_JSON" ]; then
-    # jqを使ってactiveなワークスペース名を抽出
-    if command -v jq &> /dev/null; then
-      WORKSPACE=$(jq -r '.active' "$WORKSPACES_JSON" 2>/dev/null)
-      echo "$WORKSPACE"
-    else
-      # jqがない場合はgrepとsedで抽出を試みる
-      WORKSPACE=$(grep -o '"active[[:space:]]*:[[:space:]]*"[^"]*"' "$WORKSPACES_JSON" | sed 's/"active"[[:space:]]*:[[:space:]]*"\([^"]*\)"/\1/')
-      echo "$WORKSPACE"
-    fi
-  else
-    echo "unknown"
-  fi
-}
-
-# auto tmux (obsidian) herdr使用のためコメントアウト
-# macOSでは __CFBundleIdentifier を、それ以外ではユーザーが設定する環境変数 OBSIDIAN_TERMINAL で判定
-# if [[ "$__CFBundleIdentifier" == "md.obsidian" || "$OBSIDIAN_TERMINAL" == "true" ]]; then
-#   # Check if we are already in a tmux session
-#   if [ -z "$TMUX" ]; then
-#     source ~/.zprofile
-#     SESSION_NAME=$(get_obsidian_workspace)
-#     if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
-#       tmux attach-session -t "$SESSION_NAME"
-#     else
-#       tmux new-session -s "$SESSION_NAME" -c ~
-#     fi
-#   fi
-# fi
-
-# auto herdr
-if [[ "$__CFBundleIdentifier" == "md.obsidian" || "$OBSIDIAN_TERMINAL" == "true" ]]; then
-  if [ -z "$HERDR_ENV" ]; then
+# Herdr があれば自動起動し、未導入なら tmux を使う
+if [[ -z "$HERDR_ENV" && -z "$TMUX" ]]; then
+  if command -v herdr &> /dev/null; then
     herdr
+  elif command -v tmux &> /dev/null; then
+    tmux new-session -A -s main
   fi
 fi
 
-# herdr tab context
-if [[ -n "$HERDR_PANE_ID" ]]; then
-  _herdr_tab_id=$(herdr pane get "$HERDR_PANE_ID" 2>/dev/null | jq -r '.result.pane.tab_id // ""')
-  export HERDR_TAB_ID="$_herdr_tab_id"
-  export HERDR_TAB_NAME=$(herdr tab get "$_herdr_tab_id" 2>/dev/null | jq -r '.result.tab.label // ""')
-  unset _herdr_tab_id
-fi
+# herdr tab / pane context
+function _herdr_refresh_context() {
+  [[ -n "$HERDR_PANE_ID" ]] || return 0
+  command -v herdr &> /dev/null && command -v jq &> /dev/null || return 0
 
-function _herdr_refresh_tab_name() {
-  [[ -z "$HERDR_TAB_ID" ]] && return
-  HERDR_TAB_NAME=$(herdr tab get "$HERDR_TAB_ID" 2>/dev/null | jq -r '.result.tab.label // ""')
+  local pane_info
+  pane_info=$(herdr pane get "$HERDR_PANE_ID" 2>/dev/null) || return 0
+  export HERDR_TAB_ID=$(print -r -- "$pane_info" | jq -r '.result.pane.tab_id // ""' 2>/dev/null)
+  export HERDR_PANE_NAME=$(print -r -- "$pane_info" | jq -r '.result.pane.label // ""' 2>/dev/null)
+  export HERDR_TAB_NAME=""
+  if [[ -n "$HERDR_TAB_ID" ]]; then
+    HERDR_TAB_NAME=$(herdr tab get "$HERDR_TAB_ID" 2>/dev/null | jq -r '.result.tab.label // ""' 2>/dev/null)
+  fi
+  return 0
 }
-precmd_functions+=(_herdr_refresh_tab_name)
+_herdr_refresh_context
+# .zshrc の再読み込み時にも古いフックや重複を残さない
+precmd_functions=(${precmd_functions:#_herdr_refresh_tab_name})
+precmd_functions=(${precmd_functions:#_herdr_refresh_context})
+precmd_functions+=(_herdr_refresh_context)
 
 # starship
 eval "$(starship init zsh)"
