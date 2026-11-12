@@ -72,8 +72,8 @@ alias gfre='git fetch origin && git remote prune origin'
 alias gpc='git push --set-upstream origin "$(git branch --contains | cut -d " " -f 2)"'
 alias gpp='git pull origin "$(git branch --contains | cut -d " " -f 2)" && git push origin "$(git branch --contains | cut -d " " -f 2)"'
 
-# Herdr があれば自動起動し、未導入なら tmux を使う
-if [[ -z "$HERDR_ENV" && -z "$TMUX" ]]; then
+# Obsidian Terminal 内でのみ Herdr を自動起動し、未導入なら tmux を使う
+if [[ "$TERM_PROGRAM" == "obsidian-terminal" && -z "$HERDR_ENV" && -z "$TMUX" ]]; then
   if command -v herdr &> /dev/null; then
     herdr
   elif command -v tmux &> /dev/null; then

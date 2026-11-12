@@ -1,2 +1,33 @@
 gui:
   language: "en"
+  # Purple accents with readable text on a light terminal background.
+  colorScheme: "light"
+  theme:
+    activeBorderColor:
+      - "#65428a"
+      - bold
+    inactiveBorderColor:
+      - "#777080"
+    searchingActiveBorderColor:
+      - "#236b50"
+      - bold
+    optionsTextColor:
+      - "#65428a"
+    selectedLineFgColor:
+      - "#302a3a"
+    selectedLineBgColor:
+      - "#e6e0ef"
+    inactiveViewSelectedLineBgColor:
+      - "#efedf2"
+    cherryPickedCommitFgColor:
+      - "#373348"
+    cherryPickedCommitBgColor:
+      - "#c2ffdf"
+    markedBaseCommitFgColor:
+      - "#373348"
+    markedBaseCommitBgColor:
+      - "#fff0b3"
+    unstagedChangesColor:
+      - "#a52a46"
+    defaultFgColor:
+      - "#302a3a"
