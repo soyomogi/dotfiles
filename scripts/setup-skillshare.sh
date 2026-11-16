@@ -26,7 +26,19 @@ link_shared() {
 }
 
 mkdir -p "$local_root/skills" "$local_root/extras"
-link_shared "$shared/ui" "$local_root/ui"
+
+# The ui directory is assembled from links. theme.css is canonical
+# with the Obsidian plugin and linked in like the extension files.
+ui_root="$local_root/ui"
+if [ -L "$ui_root" ]; then
+  rm "$ui_root"
+fi
+mkdir -p "$ui_root"
+link_shared "$shared/ui/manifest.json" "$ui_root/manifest.json"
+link_shared "$shared/ui/README.md" "$ui_root/README.md"
+link_shared "$shared/ui/LICENSE" "$ui_root/LICENSE"
+link_shared "$GITDIR/obsidian/plugins/skillshare-ui/theme.css" "$ui_root/theme.css"
+
 link_shared "$shared/config.yaml" "$local_root/config.yaml"
 link_shared "$shared/.skillignore" "$local_root/skills/.skillignore"
 link_shared "$shared/extras/soyomogi" "$local_root/extras/soyomogi"
