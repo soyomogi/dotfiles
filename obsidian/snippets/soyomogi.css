@@ -1,0 +1,147 @@
+/* listのスタイル調整 */
+.list-bullet {
+  align-items: unset;
+}
+.list-bullet:after {
+  background-color: unset;
+}
+
+/* MarkDownのプレビューのマージンが広すぎる問題 */
+.markdown-preview-view .task-list-item-checkbox {
+  top: 0px;
+  left: -4px;
+}
+
+.markdown-rendered ul {
+  /* padding-inline-start: 16px; */
+  margin: 4px;
+}
+.markdown-rendered ol {
+  /* padding-inline-start: 16px; */
+}
+
+/* リストのマージンが狭すぎる問題 */
+.markdown-source-view.mod-cm6 .list-bullet::after {
+  padding-left: 0px !important;
+}
+
+/* チェックボックスを少し小さめに */
+body {
+  --checkbox-size: 12px
+}
+
+/* listのズレ解消 */
+.markdown-source-view .task-list-item-checkbox {
+  margin-top: -20px;
+  margin-right: 15px;
+  top: 0px;
+}
+
+/* tdを上揃え */
+table td {
+  vertical-align: top;
+}
+
+/* チェックボックスの表示 */
+input[type="checkbox"] {
+  border: 0px;
+}
+
+input[type="checkbox"]:checked {
+  appearance: auto;
+}
+
+.cm-active .HyperMD-list-line div {
+  text-indent: -90px;
+}
+
+/* サイドバー幅固定 */
+.mod-left-split {
+  width: 15% !important;
+}
+
+.mod-right-split {
+  width: max(23%, 580px) !important;
+}
+
+/* 右下のステータスバー用に固定の高さを確保 */
+body:not(.is-mobile) .mod-right-split {
+  --soyomogi-status-bar-space: 38px;
+  box-sizing: border-box;
+  padding-bottom: var(--soyomogi-status-bar-space);
+}
+
+/* 右サイドパネル下部のBasesを行数に合わせて伸縮（最大50%） */
+.mod-right-split > .workspace-tabs:last-of-type:has(
+  .workspace-leaf:not(.mod-hidden) > .workspace-leaf-content[data-type="bases"]
+) {
+  flex: 0 1 auto !important;
+  height: auto !important;
+  min-height: 0;
+  max-height: 50%;
+}
+
+/* ペインのサイズ封じ込めを解除し、表の高さを外側まで伝える */
+.mod-right-split > .workspace-tabs:last-of-type:has(
+  .workspace-leaf:not(.mod-hidden) > .workspace-leaf-content[data-type="bases"]
+) :is(.workspace-tab-container, .workspace-leaf:not(.mod-hidden),
+      .workspace-leaf-content[data-type="bases"], .view-content) {
+  height: auto !important;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.mod-right-split > .workspace-tabs:last-of-type
+  .workspace-leaf:not(.mod-hidden):has(> .workspace-leaf-content[data-type="bases"]) {
+  contain: layout style !important;
+}
+
+.mod-right-split > .workspace-tabs:last-of-type
+  .workspace-leaf-content[data-type="bases"] .bases-view {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* =====================
+     Obsidian Terminal
+   ===================== */
+
+:root {
+  --terminal-bg   : #ffe5f3;
+  --terminal-text : #111111;
+  --terminal-font : "Hiragino Kaku Gothic MonoN", "FiraCode Nerd Font Mono", "JetBrainsMono Nerd Font Mono", "Hack Nerd Font Mono",
+                    monospace, "Apple Color Emoji";
+}
+
+/* 背景, 枠 */
+.terminal\:terminal, .xterm, .xterm-viewport {
+  background-color: var(--terminal-bg) !important;
+}
+.terminal\:terminal {
+  border: 3px solid var(--terminal-bg) !important;
+  border-radius: 12px !important;
+}
+
+/* tmux */
+.xterm-screen {
+  overflow: visible !important;
+}
+
+/* 共通フォント, 影無効化 */
+.xterm, .xterm-rows span, .xterm-text-layer span {
+  font-family   : var(--terminal-font) !important;
+  font-size     : 14px !important;
+  text-shadow   : none !important;
+  line-height   : 1.3 !important;
+  /* 罫線の見た目を優先するため、letter-spacingをnormalに設定 */
+  letter-spacing: normal !important;
+}
+
+/* 規定色セルだけ色を上書き */
+.xterm-rows span.xterm-default-fg,
+.xterm-text-layer span.xterm-default-fg,
+.xterm-rows span:not([style*="color"]):not([class*="xterm-fg-"]),
+.xterm-text-layer span:not([style*="color"]):not([class*="xterm-fg-"]) {
+  color: var(--terminal-text) !important;
+}
