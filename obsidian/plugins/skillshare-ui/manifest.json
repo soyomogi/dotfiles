@@ -1,7 +1,7 @@
 {
   "id": "skillshare-ui",
   "name": "Skillshare UI",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "minAppVersion": "1.8.3",
   "description": "Start the Skillshare dashboard and open it in an Obsidian Web viewer tab.",
   "author": "soyomogi",
