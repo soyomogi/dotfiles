@@ -5,7 +5,7 @@ const { constants } = require("node:fs");
 const path = require("node:path");
 const os = require("node:os");
 
-const DEFAULTS = { executable: "", port: 19420, customTheme: true, themePath: "~/.config/skillshare/ui/theme.css" };
+const DEFAULTS = { executable: "", port: 19420, customTheme: true, themePath: "theme.css" };
 
 module.exports = class SkillshareUIPlugin extends Plugin {
   async onload() {
@@ -13,7 +13,7 @@ module.exports = class SkillshareUIPlugin extends Plugin {
     this.dashboardTabs = new Map();
     this.settings = { ...DEFAULTS, ...(await this.loadData()) };
     this.theme = new SkillshareTheme({
-      getPath: () => this.settings.customTheme ? this.settings.themePath : "",
+      getPath: () => this.settings.customTheme ? this.resolveThemePath(this.settings.themePath) : "",
       isDashboard: url => this.isDashboardURL(url),
       onError: error => console.warn("Skillshare UI theme:", error),
     });
@@ -92,6 +92,18 @@ module.exports = class SkillshareUIPlugin extends Plugin {
     }
     this.theme.sync(leaves.filter(leaf => this.isDashboardURL(leaf.getViewState().state?.url))
       .map(leaf => leaf.view.webview || leaf.view.containerEl.querySelector("webview")).filter(Boolean));
+  }
+
+  resolveThemePath(themePath) {
+    const value = (themePath || "").trim();
+    if (!value) return "";
+    if (value.startsWith("~/")) return path.join(os.homedir(), value.slice(2));
+    if (path.isAbsolute(value)) return value;
+    // Relative paths resolve against the plugin folder, so the default
+    // "theme.css" names the file installed next to main.js.
+    const basePath = this.app.vault.adapter.getBasePath?.() || "";
+    const pluginDir = this.manifest?.dir || "";
+    return basePath && pluginDir ? path.join(basePath, pluginDir, value) : value;
   }
 
   async resolveExecutable() {
@@ -224,7 +236,7 @@ class SkillshareSettings extends PluginSettingTab {
         }));
     new Setting(this.containerEl)
       .setName("Theme CSS path")
-      .setDesc("共有 CSS のパス。~/ を使用できます。変更後は Reload theme でも再読み込みできます。")
+      .setDesc("共有 CSS のパス。相対パスはプラグインのフォルダ基準です。~/ も使用できます。変更後は Reload theme でも再読み込みできます。")
       .addText(text => text.setValue(this.plugin.settings.themePath)
         .onChange(async value => {
           this.plugin.settings.themePath = value.trim();
