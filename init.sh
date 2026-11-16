@@ -50,4 +50,7 @@ fetch_if_missing "https://raw.githubusercontent.com/tomasr/molokai/master/colors
 fetch_if_missing "https://raw.githubusercontent.com/tssm/fairyfloss.vim/master/colors/fairyfloss.vim" \
   "$VCOL/fairyfloss.vim"
 
+# Shared skillshare config and extras; no skillshare executable is required.
+bash "$GITDIR/scripts/setup-skillshare.sh" "$GITDIR"
+
 printf 'done\n'

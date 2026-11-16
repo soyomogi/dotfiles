@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Skillshare Pink",
+  "version": "0.1.0",
+  "description": "A soft pink and lavender theme for the local Skillshare dashboard.",
+  "content_scripts": [
+    {
+      "matches": [
+        "http://127.0.0.1/*",
+        "http://localhost/*"
+      ],
+      "include_globs": [
+        "http://127.0.0.1:19420/*",
+        "http://localhost:19420/*"
+      ],
+      "css": [
+        "theme.css"
+      ],
+      "run_at": "document_start"
+    }
+  ]
+}

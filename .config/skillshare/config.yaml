@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/runkids/skillshare/main/schemas/config.schema.json
+
+sources:
+  skills: ~/.config/skillshare/skills
+  agents: ~/git/skills/agents
+  extras: ~/.config/skillshare/extras
+
+preserve_tilde_on_save: true
+mode: merge
+
+targets:
+  claude:
+    skills:
+      path: ~/.claude/skills
+      target_naming: standard
+  universal:
+    skills:
+      path: ~/.agents/skills
+      target_naming: standard
+
+extras:
+  - name: soyomogi
+    file: AGENTS.md
+    targets:
+      - path: ~/.codex
+        mode: symlink
+      - path: ~/.agents
+        mode: symlink
+  - name: memory
+    targets: []
+
+ignore:
+  - .DS_Store
+  - .git/
+  - __pycache__/
+
+audit:
+  block_threshold: CRITICAL
+
+follow_source_links: true
