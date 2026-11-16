@@ -30,23 +30,12 @@ fetch_if_missing() {
   printf 'get : %s\n' "$2"
 }
 
-# link_keep <dst> <src>
-# 既存ファイルはバックアップへ退避してからリンクする。
-OBS_BAK=
-link_keep() {
-  if [ -L "$1" ] && [ "$(readlink "$1")" = "$2" ]; then
-    return
-  fi
-  if [ -e "$1" ] || [ -L "$1" ]; then
-    if [ -z "$OBS_BAK" ]; then
-      OBS_BAK=$(mktemp -d "$OBS_CFG/.dotfiles-backup.XXXXXX")
-      printf 'backup: %s\n' "$OBS_BAK"
-    fi
-    mv "$1" "$OBS_BAK/$(basename "$1")"
-  fi
+# copy <dst> <src>
+copy() {
+  rm -rf "$1"
   mkdir -p "$(dirname "$1")"
-  ln -s "$2" "$1"
-  printf 'link: %s -> %s\n' "$1" "$2"
+  cp -R "$2" "$1"
+  printf 'copy: %s -> %s\n' "$2" "$1"
 }
 
 # ====== 実行 ======
@@ -73,8 +62,8 @@ fetch_if_missing "https://raw.githubusercontent.com/tssm/fairyfloss.vim/master/c
 # $OBSIDIAN_ROOT; unset means this machine has no deployment.
 if [ -n "${OBSIDIAN_ROOT:-}" ] && [ -d "$OBSIDIAN_ROOT/.obsidian" ]; then
   OBS_CFG="$OBSIDIAN_ROOT/.obsidian"
-  link_keep "$OBS_CFG/plugins/skillshare-ui" "$GITDIR/obsidian/plugins/skillshare-ui"
-  link_keep "$OBS_CFG/snippets/soyomogi.css" "$GITDIR/obsidian/snippets/soyomogi.css"
+  copy "$OBS_CFG/plugins/skillshare-ui" "$GITDIR/obsidian/plugins/skillshare-ui"
+  copy "$OBS_CFG/snippets/soyomogi.css" "$GITDIR/obsidian/snippets/soyomogi.css"
 else
   printf 'skip: OBSIDIAN_ROOT is not set to an Obsidian vault\n'
 fi
