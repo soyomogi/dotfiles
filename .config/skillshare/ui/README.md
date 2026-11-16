@@ -14,6 +14,6 @@ After `git pull`, reload the extension in `chrome://extensions` and reload the S
 
 ## Obsidian on macOS
 
-The Skillshare UI plugin reads the same CSS from `~/.config/skillshare/ui/theme.css`. It applies the stylesheet to its local dashboard Web viewer only. Change the path in the plugin settings if needed; use **Skillshare UI: Reload theme** after editing the file. Disabling the custom theme restores Skillshare's appearance.
+The Skillshare UI plugin reads the same CSS from the `theme.css` installed in its plugin folder. It applies the stylesheet to its local dashboard Web viewer only. Change the path in the plugin settings if needed; use **Skillshare UI: Reload theme** after editing the file. Disabling the custom theme restores Skillshare's appearance.
 
 The theme provides a fixed light palette, including when Skillshare's own Dark or Playful mode is selected. Disable the custom theme/extension to use the built-in appearance. No cache or upstream Skillshare files are changed. Tested against Skillshare 0.30.6; later UI changes may require CSS adjustments. Windows and WSL2 setup are not implemented here yet.
