@@ -290,6 +290,12 @@ class SkillshareTheme {
         this.schedule(view, state);
       };
       view.addEventListener("dom-ready", state.ready);
+      // The URL is not settled when a tab first opens: the initial apply can
+      // run against a blank document, and that document's dom-ready may have
+      // already fired before this listener was attached. Re-check when the
+      // navigation commits and when the load finishes, when the URL is final.
+      view.addEventListener("did-navigate", state.ready);
+      view.addEventListener("did-finish-load", state.ready);
       this.views.set(view, state);
       this.schedule(view, state);
     }
@@ -332,6 +338,8 @@ class SkillshareTheme {
   release(view, state) {
     state.disposed = true;
     view.removeEventListener("dom-ready", state.ready);
+    view.removeEventListener("did-navigate", state.ready);
+    view.removeEventListener("did-finish-load", state.ready);
     try {
       if (state.key) Promise.resolve(view.removeInsertedCSS(state.key)).catch(() => {});
     } catch (_) { /* A closed webview may already have been destroyed. */ }
@@ -342,3 +350,4 @@ class SkillshareTheme {
     for (const [view, state] of this.views) this.release(view, state);
   }
 };
+
