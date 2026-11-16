@@ -73,7 +73,8 @@ alias gpc='git push --set-upstream origin "$(git branch --contains | cut -d " " 
 alias gpp='git pull origin "$(git branch --contains | cut -d " " -f 2)" && git push origin "$(git branch --contains | cut -d " " -f 2)"'
 
 # Obsidian Terminal 内でのみ Herdr を自動起動し、未導入なら tmux を使う
-if [[ "$TERM_PROGRAM" == "obsidian-terminal" && -z "$HERDR_ENV" && -z "$TMUX" ]]; then
+# WSL では TERM_PROGRAM が渡らないため、専用フラグも確認する。
+if [[ ( "$TERM_PROGRAM" == "obsidian-terminal" || "$OBSIDIAN_TERMINAL" == "true" ) && -z "$HERDR_ENV" && -z "$TMUX" ]]; then
   if command -v herdr &> /dev/null; then
     herdr
   elif command -v tmux &> /dev/null; then
