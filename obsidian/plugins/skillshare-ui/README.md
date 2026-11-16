@@ -17,8 +17,8 @@ Closing the last dashboard tab automatically stops its server. Tabs for the same
 
 Disabling the plugin leaves the server running. Stop it with **Stop server** before disabling, or from a terminal with `skillshare ui stop` when needed.
 
-The optional custom theme reads `~/.config/skillshare/ui/theme.css`, shared with the Chrome extension in dotfiles. Change the CSS path or disable the theme in plugin settings. A missing CSS file leaves the standard appearance in place. **Skillshare UI: Reload theme** applies file edits to open dashboard tabs; page reloads also reapply the CSS. Other sites in Web viewer are unaffected. Unloading the plugin removes the injected stylesheet.
+The optional custom theme reads `theme.css` in the plugin folder by default. That file is the canonical copy in dotfiles; dotfiles also links it into the Chrome extension's folder, so the plugin and the extension each apply the same CSS from the `theme.css` next to them. A relative theme path resolves against the plugin folder; `~/` and absolute paths also work. Change the CSS path or disable the theme in plugin settings. A missing CSS file leaves the standard appearance in place. **Skillshare UI: Reload theme** applies file edits to open dashboard tabs; page reloads also reapply the CSS. Other sites in Web viewer are unaffected. Unloading the plugin removes the injected stylesheet.
 
-`main.js` is the source and distributable; no build is required. Copy `main.js` and `manifest.json` to `.obsidian/plugins/skillshare-ui/` to install in another vault.
+`main.js` is the source and distributable; no build is required. Copy `main.js`, `manifest.json` and `theme.css` to `.obsidian/plugins/skillshare-ui/` to install in another vault.
 
 The Web viewer view type and core-plugin enabled check use Obsidian internals and may require adjustment after an Obsidian update.
