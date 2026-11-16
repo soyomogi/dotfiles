@@ -2,11 +2,11 @@
 
 An independently written light pink and lavender theme for Skillshare's web dashboard, shared by Chrome and the Obsidian Skillshare UI plugin. Its appearance is inspired by Bubble Space's Pink preset; no Bubble Space CSS, images, fonts or other assets are included. The files in this directory are MIT licensed (see LICENSE). This is an independent customization, not an official Bubble Space or Skillshare theme.
 
-Run `bash scripts/setup-skillshare.sh` from dotfiles to link this directory to `~/.config/skillshare/ui`. Skillshare need not be installed for this step.
+Run `bash scripts/setup-skillshare.sh` from dotfiles to link these files into `~/.config/skillshare/ui`. The canonical theme.css lives with the Obsidian plugin in `obsidian/plugins/skillshare-ui/` and is linked into the same directory. Skillshare need not be installed for this step.
 
 ## Chrome on macOS
 
-Open `chrome://extensions`, enable Developer mode, choose **Load unpacked**, and select this directory in your dotfiles checkout (Cmd+Shift+G opens a path entry in the file picker). This is a one-time registration. No Chrome Web Store publication is required. If your organization disables unpacked extensions, administrator approval is needed.
+Open `chrome://extensions`, enable Developer mode, choose **Load unpacked**, and select `~/.config/skillshare/ui` (Cmd+Shift+G opens a path entry in the file picker). This is a one-time registration. No Chrome Web Store publication is required. If your organization disables unpacked extensions, administrator approval is needed.
 
 Only `http://127.0.0.1:19420/` and `http://localhost:19420/` and their subpages receive this CSS. The extension contains no JavaScript, telemetry, external assets or background process. For a different port, edit `include_globs` in manifest.json. Keep matches limited to the intended dashboard hosts.
 
