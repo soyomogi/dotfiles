@@ -110,6 +110,8 @@ module.exports = class SkillshareUIPlugin extends Plugin {
     if (this.settings.executable.trim()) return this.settings.executable.trim();
     const directories = [
       ...(process.env.PATH || "").split(path.delimiter),
+      ...(process.platform === "win32" && process.env.LOCALAPPDATA
+        ? [path.join(process.env.LOCALAPPDATA, "Programs", "skillshare")] : []),
       "/opt/homebrew/bin", "/usr/local/bin", path.join(os.homedir(), ".local", "bin"),
     ];
     for (const directory of directories.filter(Boolean)) {
@@ -162,6 +164,10 @@ module.exports = class SkillshareUIPlugin extends Plugin {
       ...process.env,
       PATH: [path.dirname(executable), process.env.PATH, "/opt/homebrew/bin", "/usr/local/bin", "/usr/bin", "/bin"].filter(Boolean).join(path.delimiter),
     };
+    // Skillshare 0.30.9 copy sync needs legacy Go junction resolution on Windows.
+    if (process.platform === "win32") {
+      env.GODEBUG = [...(env.GODEBUG || "").split(",").filter(value => value && !value.startsWith("winsymlink=")), "winsymlink=0"].join(",");
+    }
     const args = ["ui", action, "--global", "--host", "127.0.0.1", "--port", String(port)];
     if (action === "start") args.push("--no-open");
     await new Promise((resolve, reject) => {

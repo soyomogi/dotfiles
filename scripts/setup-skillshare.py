@@ -71,6 +71,24 @@ def exists(path):
     return path.exists() or path.is_symlink()
 
 
+def copy_missing(source, target):
+    """Keep repository payloads, merging additional local files within groups."""
+    for entry in source.iterdir():
+        if entry.name in (".metadata.json", ".skillignore"):
+            continue
+        destination = target / entry.name
+        if entry.is_dir() and not entry.is_symlink():
+            if not exists(destination):
+                destination.mkdir()
+            if destination.is_dir() and not destination.is_symlink():
+                copy_missing(entry, destination)
+        elif not exists(destination):
+            if entry.is_symlink():
+                destination.symlink_to(entry.resolve(), target_is_directory=entry.is_dir())
+            else:
+                shutil.copy2(entry, destination)
+
+
 def setup(repo, home):
     shared = repo / ".config/skillshare"
     local = home / ".config/skillshare"
@@ -98,16 +116,7 @@ def setup(repo, home):
         if (live / ".metadata.json").is_file():
             merge(live / ".metadata.json", skills / ".metadata.json")
         if live.is_dir():
-            for entry in live.iterdir():
-                destination = skills / entry.name
-                if entry.name in (".metadata.json", ".skillignore") or exists(destination):
-                    continue
-                if entry.is_symlink():
-                    destination.symlink_to(entry.resolve())
-                elif entry.is_dir():
-                    shutil.copytree(entry, destination, symlinks=True)
-                else:
-                    shutil.copy2(entry, destination)
+            copy_missing(live, skills)
         link(skills, live)
 
     # Keep the Chrome registration path, sharing the Obsidian stylesheet.
@@ -122,6 +131,45 @@ def setup(repo, home):
     link(shared / "config.yaml", local / "config.yaml")
     link(shared / ".skillignore", live / ".skillignore")
     link(shared / "extras/soyomogi", local / "extras/soyomogi")
+
+
+def setup_wsl(home, windows_root):
+    """WSL has its own targets; Windows remains the owner of the shared source."""
+    local = home / ".config/skillshare"
+    local.mkdir(parents=True, exist_ok=True)
+    config = local / "config.yaml"
+    if not exists(config):
+        config.write_text(json.dumps({
+            "sources": {name: str(windows_root / name) for name in ("skills", "agents", "extras")},
+            "mode": "merge", "follow_source_links": True,
+            "targets": {"universal": {"skills": {
+                "path": str(home / ".agents/skills"), "target_naming": "standard",
+            }}},
+            "ignore": [".DS_Store", ".git/", "__pycache__/"],
+            "audit": {"block_threshold": "CRITICAL"},
+        }, indent=2) + "\n")
+
+
+def setup_windows(native_repo, restore):
+    command = ["powershell.exe", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
+               "-File", native_repo + "\\scripts\\setup-skillshare-windows.ps1", "-GitDir", native_repo]
+    if restore:
+        command.append("-Install")
+    subprocess.run(command, check=True)
+
+
+def setup_windows_from_wsl(repo, home, restore):
+    native_repo = subprocess.check_output(["wslpath", "-w", str(repo)], text=True).strip()
+    setup_windows(native_repo, restore)
+    native_root = subprocess.check_output([
+        "powershell.exe", "-NoProfile", "-NonInteractive", "-Command",
+        'if ($env:XDG_CONFIG_HOME) { Join-Path $env:XDG_CONFIG_HOME "skillshare" } '
+        'else { Join-Path $env:APPDATA "skillshare" }',
+    ], text=True).strip()
+    windows_root = Path(subprocess.check_output(["wslpath", "-u", native_root], text=True).strip())
+    setup_wsl(home, windows_root)
+    if restore:
+        subprocess.run(["skillshare", "sync", "-g"], check=True)
 
 
 def install_and_sync(repo, home):
@@ -146,12 +194,17 @@ if __name__ == "__main__":
     args = parser.parse_args()
     try:
         repo = Path(os.environ.get("GITDIR", Path(__file__).resolve().parents[1])).expanduser().resolve()
-        if args.install and not shutil.which("skillshare"):
+        if args.install and sys.platform != "win32" and not shutil.which("skillshare"):
             sys.exit("skillshare is not installed")
-        setup(repo, Path.home())
-        if args.install:
-            install_and_sync(repo, Path.home())
+        if sys.platform == "win32":
+            setup_windows(str(repo), args.install)
+        elif os.environ.get("WSL_DISTRO_NAME"):
+            setup_windows_from_wsl(repo, Path.home(), args.install)
         else:
+            setup(repo, Path.home())
+            if args.install:
+                install_and_sync(repo, Path.home())
+        if not args.install:
             print("skillshare configuration ready; use --install to restore and sync skills")
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as error:
         sys.exit(str(error))

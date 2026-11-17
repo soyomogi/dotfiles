@@ -2,7 +2,7 @@
 
 An independently written light pink and lavender theme for Skillshare's web dashboard, shared by Chrome and the Obsidian Skillshare UI plugin. Its appearance is inspired by Bubble Space's Pink preset; no Bubble Space CSS, images, fonts or other assets are included. The files in this directory are MIT licensed (see LICENSE). This is an independent customization, not an official Bubble Space or Skillshare theme.
 
-The extension source lives in `extensions/skillshare-ui-pink-theme/` in dotfiles. Run `python3 scripts/setup-skillshare.py` from the repository root to link these files into `~/.config/skillshare/ui`. The canonical theme.css lives with the Obsidian plugin in `.obsidian/plugins/skillshare-ui/` and is linked into the same installation directory. Skillshare need not be installed for this step. Add `--install` to restore the skills recorded in `.metadata.json` at their recorded commits and sync targets. Prepare APM skills separately in `~/git/skills`.
+The canonical theme.css lives with the Obsidian plugin in `.obsidian/plugins/skillshare-ui/`.
 
 ## Chrome on macOS
 
@@ -16,4 +16,4 @@ After `git pull`, reload the extension in `chrome://extensions` and reload the S
 
 The Skillshare UI plugin reads the same CSS from the `theme.css` installed in its plugin folder. It applies the stylesheet to its local dashboard Web viewer only. Change the path in the plugin settings if needed; use **Skillshare UI: Reload theme** after editing the file. Disabling the custom theme restores Skillshare's appearance.
 
-The theme provides a fixed light palette, including when Skillshare's own Dark or Playful mode is selected. Disable the custom theme/extension to use the built-in appearance. No cache or upstream Skillshare files are changed. Tested against Skillshare 0.30.6; later UI changes may require CSS adjustments. Windows and WSL2 setup are not implemented here yet.
+The theme provides a fixed light palette, including when Skillshare's own Dark or Playful mode is selected. Disable the custom theme/extension to use the built-in appearance. No cache or upstream Skillshare files are changed. Tested against Skillshare 0.30.6; later UI changes may require CSS adjustments.
