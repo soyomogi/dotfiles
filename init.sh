@@ -10,6 +10,7 @@ NVIM="$CFG/nvim"
 LGIT="$CFG/lazygit"
 STARSHIP="$CFG/starship.toml"
 HERDR="$CFG/herdr"
+GIT_CONFIG="$CFG/git/config"
 VIM="$HOME/.vim"
 VCOL="$VIM/colors"
 
@@ -72,11 +73,12 @@ link "$HOME/.vimrc" "$GITDIR/.vimrc"
 link "$HOME/.screenrc" "$GITDIR/.screenrc"
 link "$HOME/.tmux.conf" "$GITDIR/.tmux.conf"
 
-# neovim / lazygit / starship / herdr
+# neovim / lazygit / starship / herdr / git
 link "$NVIM" "$GITDIR/.config/nvim"
 link "$LGIT" "$GITDIR/.config/lazygit"
 link "$STARSHIP" "$GITDIR/.config/starship.toml"
 link "$HERDR/config.toml" "$GITDIR/.config/herdr/config.toml"
+link "$GIT_CONFIG" "$GITDIR/.config/git/config"
 
 # vim カラースキーム
 mkdir -p "$VCOL"
