@@ -1,17 +1,10 @@
 # Only reviewed shared configuration belongs in dotfiles.
-/*
+/**
 !/.gitignore
 !/config.yaml
 !/.skillignore
-!/skills.tsv
+!/skills/
+!/skills/.metadata.json
 !/extras/
-/extras/*
 !/extras/soyomogi/
-/extras/soyomogi/*
 !/extras/soyomogi/AGENTS.md
-!/ui/
-/ui/*
-!/ui/manifest.json
-!/ui/theme.css
-!/ui/LICENSE
-!/ui/README.md

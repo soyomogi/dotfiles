@@ -62,8 +62,8 @@ fetch_if_missing "https://raw.githubusercontent.com/tssm/fairyfloss.vim/master/c
 # $OBSIDIAN_ROOT; unset means this machine has no deployment.
 if [ -n "${OBSIDIAN_ROOT:-}" ] && [ -d "$OBSIDIAN_ROOT/.obsidian" ]; then
   OBS_CFG="$OBSIDIAN_ROOT/.obsidian"
-  copy "$OBS_CFG/plugins/skillshare-ui" "$GITDIR/obsidian/plugins/skillshare-ui"
-  copy "$OBS_CFG/snippets/soyomogi.css" "$GITDIR/obsidian/snippets/soyomogi.css"
+  copy "$OBS_CFG/plugins/skillshare-ui" "$GITDIR/.obsidian/plugins/skillshare-ui"
+  copy "$OBS_CFG/snippets/soyomogi.css" "$GITDIR/.obsidian/snippets/soyomogi.css"
 else
   printf 'skip: OBSIDIAN_ROOT is not set to an Obsidian vault\n'
 fi

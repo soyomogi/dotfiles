@@ -2,7 +2,7 @@
 
 An independently written light pink and lavender theme for Skillshare's web dashboard, shared by Chrome and the Obsidian Skillshare UI plugin. Its appearance is inspired by Bubble Space's Pink preset; no Bubble Space CSS, images, fonts or other assets are included. The files in this directory are MIT licensed (see LICENSE). This is an independent customization, not an official Bubble Space or Skillshare theme.
 
-Run `bash scripts/setup-skillshare.sh` from dotfiles to link these files into `~/.config/skillshare/ui`. The canonical theme.css lives with the Obsidian plugin in `obsidian/plugins/skillshare-ui/` and is linked into the same directory. Skillshare need not be installed for this step.
+The extension source lives in `extensions/skillshare-ui-pink-theme/` in dotfiles. Run `python3 scripts/setup-skillshare.py` from the repository root to link these files into `~/.config/skillshare/ui`. The canonical theme.css lives with the Obsidian plugin in `.obsidian/plugins/skillshare-ui/` and is linked into the same installation directory. Skillshare need not be installed for this step. Add `--install` to restore the skills recorded in `.metadata.json` at their recorded commits and sync targets. Prepare APM skills separately in `~/git/skills`.
 
 ## Chrome on macOS
 

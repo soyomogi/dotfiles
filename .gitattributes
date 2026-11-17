@@ -1,2 +1,2 @@
 *.sh text eol=lf
-.config/skillshare/skills.tsv text eol=lf
+.config/skillshare/skills/.metadata.json text eol=lf
