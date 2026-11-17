@@ -39,6 +39,33 @@ copy() {
 }
 
 # ====== 実行 ======
+# Windows のホームにも同じ git 置き場を公開する。
+if [ "${OS:-}" = 'Windows_NT' ] || [ -n "${WSL_DISTRO_NAME:-}" ]; then
+  GIT_ROOT=$(cd "$GITDIR/.." && pwd -P)
+  if [ -n "${WSL_DISTRO_NAME:-}" ]; then
+    WINDOWS_GIT_ROOT=$(wslpath -w "$GIT_ROOT")
+  else
+    WINDOWS_GIT_ROOT=$(cygpath -w "$GIT_ROOT")
+  fi
+  printf '%s\n' "$WINDOWS_GIT_ROOT" | powershell.exe -NoProfile -NonInteractive -Command '
+    $ErrorActionPreference = "Stop"
+    [Console]::InputEncoding = [Text.UTF8Encoding]::new()
+    $source = [Console]::In.ReadLine()
+    $destination = Join-Path $env:USERPROFILE "git"
+    $existing = Get-Item -LiteralPath $destination -Force -ErrorAction SilentlyContinue
+    if ($existing) {
+      $target = if ($existing.LinkType) { @($existing.Target)[0] } else { $existing.FullName }
+      if (![IO.Path]::IsPathRooted($target)) { $target = Join-Path $env:USERPROFILE $target }
+      if ([IO.Path]::GetFullPath($target) -ne [IO.Path]::GetFullPath($source)) {
+        throw "Existing git path points elsewhere: $destination"
+      }
+    } else {
+      New-Item -ItemType Junction -Path $destination -Target $source | Out-Null
+      Write-Host "link: $destination -> $source"
+    }
+  '
+fi
+
 # zsh / vim / screen / tmux
 link "$HOME/.zshrc" "$GITDIR/.zshrc"
 link "$HOME/.vimrc" "$GITDIR/.vimrc"
