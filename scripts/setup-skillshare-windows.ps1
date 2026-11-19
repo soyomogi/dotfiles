@@ -94,16 +94,23 @@ foreach ($name in @('manifest.json', 'README.md', 'LICENSE')) {
 }
 Copy-Item "$GitDir\.obsidian\plugins\skillshare-ui\theme.css" "$root\ui\theme.css" -Force
 Copy-Item "$shared\.skillignore" "$live\.skillignore" -Force
-Copy-Item "$shared\extras\soyomogi" "$root\extras" -Recurse -Force
+foreach ($name in @('soyomogi', 'trigger')) {
+    Copy-Item -LiteralPath (Join-Path "$shared\extras" $name) -Destination "$root\extras" -Recurse -Force
+}
 $config = Join-Path $root 'config.yaml'
 if (!(Test-Path -LiteralPath $config)) {
     Write-Json $config ([ordered]@{
         sources = @{ skills=$live; agents="$root\agents"; extras="$root\extras" }
         mode = 'copy'; follow_source_links = $true
         targets = @{ universal = @{ skills = @{ path="$env:USERPROFILE\.agents\skills"; target_naming='standard' } } }
-        extras = @(@{name='soyomogi'; file='AGENTS.md'; targets=@(
-            @{path="$env:USERPROFILE\.codex"; mode='copy'}, @{path="$env:USERPROFILE\.agents"; mode='copy'}
-        )})
+        extras = @(
+            @{name='soyomogi'; file='AGENTS.md'; targets=@(
+                @{path="$env:USERPROFILE\.codex"; mode='prepend'}, @{path="$env:USERPROFILE\.agents"; mode='prepend'}
+            )}
+            @{name='trigger'; file='AGENTS.md'; targets=@(
+                @{path="$env:USERPROFILE\.codex"; mode='append'}, @{path="$env:USERPROFILE\.agents"; mode='append'}
+            )}
+        )
         ignore = @('.DS_Store', '.git/', '__pycache__/'); audit = @{block_threshold='CRITICAL'}
     })
 }
@@ -116,6 +123,21 @@ if ($Install) {
         function Invoke-Skillshare {
             & $cli @args
             if ($LASTEXITCODE) { throw "Skillshare failed: $args" }
+        }
+        $extras = ((Invoke-Skillshare extras list --json -g) -join "`n") | ConvertFrom-Json
+        $personal = $extras | Where-Object { $_.name -eq 'soyomogi' -and $_.file -eq 'AGENTS.md' }
+        if ($personal -and !($extras | Where-Object { $_.name -eq 'trigger' })) {
+            $instructionTargets = @("$env:USERPROFILE\.codex", "$env:USERPROFILE\.agents")
+            foreach ($target in $personal.targets) {
+                if ($target.path -in $instructionTargets -and $target.mode -ne 'prepend') {
+                    Invoke-Skillshare extras soyomogi --target $target.path --mode prepend -g
+                }
+            }
+            # Complete any previous mode transition before registering another writer.
+            Invoke-Skillshare sync extras -g
+            $triggerArgs = @('extras', 'init', 'trigger', '--file', 'AGENTS.md', '--mode', 'append', '--no-tui', '-g')
+            foreach ($target in $instructionTargets) { $triggerArgs += @('--target', $target) }
+            Invoke-Skillshare @triggerArgs
         }
         # Read once; install atomically replaces this live, Git-tracked metadata.
         $records = Read-Metadata $metadata

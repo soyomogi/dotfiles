@@ -23,9 +23,16 @@ extras:
     file: AGENTS.md
     targets:
       - path: ~/.codex
-        mode: symlink
+        mode: prepend
       - path: ~/.agents
-        mode: symlink
+        mode: prepend
+  - name: trigger
+    file: AGENTS.md
+    targets:
+      - path: ~/.codex
+        mode: append
+      - path: ~/.agents
+        mode: append
   - name: memory
     targets: []
 
