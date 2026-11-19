@@ -71,6 +71,7 @@ alias lg='lazygit'
 alias gfre='git fetch origin && git remote prune origin'
 alias gpc='git push --set-upstream origin "$(git branch --contains | cut -d " " -f 2)"'
 alias gpp='git pull origin "$(git branch --contains | cut -d " " -f 2)" && git push origin "$(git branch --contains | cut -d " " -f 2)"'
+alias gsfm='git submodule update --init --remote'
 
 # Obsidian Terminal 内でのみ Herdr を自動起動し、未導入なら tmux を使う
 # WSL では TERM_PROGRAM が渡らないため、専用フラグも確認する。
