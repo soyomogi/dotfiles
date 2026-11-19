@@ -176,13 +176,13 @@ def setup_windows_from_wsl(repo, home, restore):
 def install_and_sync(repo, home):
     install(repo / ".config/skillshare/skills/.metadata.json")
     apm = home / "git/skills/.agents/skills"
-    link = home / ".config/skillshare/skills/_apm"
+    link = home / ".config/skillshare/skills/soyomogi"
     if apm.is_dir():
         if exists(link):
             if not link.is_dir() or link.resolve() != apm.resolve():
                 raise ValueError(f"{link} already points elsewhere")
         else:
-            subprocess.run(["skillshare", "link", str(apm), "--name", "_apm", "-g"], check=True)
+            subprocess.run(["skillshare", "link", str(apm), "--name", "soyomogi", "-g"], check=True)
     else:
         print("skip: APM skills are not prepared in ~/git/skills/.agents/skills")
     subprocess.run(["skillshare", "sync", "-g"], check=True)

@@ -157,9 +157,9 @@ if ($Install) {
         $gitHome = Get-Item (Join-Path $env:USERPROFILE 'git') -Force -ErrorAction SilentlyContinue
         $gitRoot = if ($gitHome.LinkType) { @($gitHome.Target)[0] } else { Join-Path $env:USERPROFILE 'git' }
         $apm = Join-Path $gitRoot 'skills\.agents\skills'
-        $link = Join-Path $live '_apm'
+        $link = Join-Path $live 'soyomogi'
         if (Test-Path -LiteralPath $apm) {
-            if (!(Test-Path -LiteralPath $link)) { Invoke-Skillshare link $apm --name _apm --enable -g }
+            if (!(Test-Path -LiteralPath $link)) { Invoke-Skillshare link $apm --name soyomogi --enable -g }
             else {
                 $item = Get-Item -LiteralPath $link -Force
                 if (!$item.LinkType -or [IO.Path]::GetFullPath(@($item.Target)[0]) -ne [IO.Path]::GetFullPath($apm)) {
