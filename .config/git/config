@@ -17,3 +17,5 @@
   d2 = d HEAD~2
   d3 = d HEAD~3
   dd = !git difftool --tool=vidiff --no-prompt
+[core]
+	editor = vim
