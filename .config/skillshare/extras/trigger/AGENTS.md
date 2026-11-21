@@ -8,6 +8,10 @@ Herdr 環境（`HERDR_ENV=1`）では、環境変数 `HERDR_TAB_NAME`・`HERDR_P
 
 Herdr 環境（`HERDR_ENV=1`）で委譲先の指定がない場合は、`$herdr` を参照し、現在の workspace の `🤖` タブで委譲先を探す。Herdr のエージェントへ送る場合は、`$herdr` の手順で送る。
 
+### handoff の保存先
+
+`handoff` を実行するときは、スキルの保存先指定に優先して、引き継ぎ文書を Obsidian Vault の `handoff/`（`$OBSIDIAN_ROOT/handoff/`）に保存する。
+
 ### ローカルの読み戻し確認
 
 確認対象のファイルのパスが分かり、通常権限で読める場合は、ファイルを直接読む。
