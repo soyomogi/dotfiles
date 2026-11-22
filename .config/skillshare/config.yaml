@@ -53,6 +53,36 @@ extras:
       - path: ~/.agents/skills/skill-authoring
         mode: append
         as: SKILL.md
+  - name: patches-grilling
+    source: ~/.config/skillshare/extras/patches
+    file: grilling.md
+    targets:
+      - path: ~/.claude/skills/grilling
+        mode: append
+        as: SKILL.md
+      - path: ~/.agents/skills/grilling
+        mode: append
+        as: SKILL.md
+  - name: patches-pr
+    source: ~/.config/skillshare/extras/patches
+    file: pr.md
+    targets:
+      - path: ~/.claude/skills/pr
+        mode: append
+        as: SKILL.md
+      - path: ~/.agents/skills/pr
+        mode: append
+        as: SKILL.md
+  - name: patches-obsidian-notes
+    source: ~/.config/skillshare/extras/patches
+    file: obsidian-notes.md
+    targets:
+      - path: ~/.claude/skills/obsidian-notes
+        mode: append
+        as: SKILL.md
+      - path: ~/.agents/skills/obsidian-notes
+        mode: append
+        as: SKILL.md
   - name: memory
     targets: []
 
