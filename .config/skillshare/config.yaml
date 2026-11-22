@@ -33,9 +33,26 @@ extras:
         mode: append
       - path: ~/.agents
         mode: append
-  - name: patches
+  - name: patches-skill-audit
+    source: ~/.config/skillshare/extras/patches
+    file: skill-audit.md
     targets:
-      - path: ~/.agents/patches
+      - path: ~/.claude/skills/skill-audit
+        mode: append
+        as: SKILL.md
+      - path: ~/.agents/skills/skill-audit
+        mode: append
+        as: SKILL.md
+  - name: patches-skill-authoring
+    source: ~/.config/skillshare/extras/patches
+    file: skill-authoring.md
+    targets:
+      - path: ~/.claude/skills/skill-authoring
+        mode: append
+        as: SKILL.md
+      - path: ~/.agents/skills/skill-authoring
+        mode: append
+        as: SKILL.md
   - name: memory
     targets: []
 
