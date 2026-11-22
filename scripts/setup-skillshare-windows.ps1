@@ -94,7 +94,7 @@ foreach ($name in @('manifest.json', 'README.md', 'LICENSE')) {
 }
 Copy-Item "$GitDir\.obsidian\plugins\skillshare-ui\theme.css" "$root\ui\theme.css" -Force
 Copy-Item "$shared\.skillignore" "$live\.skillignore" -Force
-foreach ($name in @('soyomogi', 'trigger')) {
+foreach ($name in @('soyomogi', 'trigger', 'patches')) {
     Copy-Item -LiteralPath (Join-Path "$shared\extras" $name) -Destination "$root\extras" -Recurse -Force
 }
 $config = Join-Path $root 'config.yaml'
@@ -109,6 +109,9 @@ if (!(Test-Path -LiteralPath $config)) {
             )}
             @{name='trigger'; file='AGENTS.md'; targets=@(
                 @{path="$env:USERPROFILE\.codex"; mode='append'}, @{path="$env:USERPROFILE\.agents"; mode='append'}
+            )}
+            @{name='patches'; targets=@(
+                @{path="$env:USERPROFILE\.agents\patches"; mode='copy'}
             )}
         )
         ignore = @('.DS_Store', '.git/', '__pycache__/'); audit = @{block_threshold='CRITICAL'}
@@ -138,6 +141,9 @@ if ($Install) {
             $triggerArgs = @('extras', 'init', 'trigger', '--file', 'AGENTS.md', '--mode', 'append', '--no-tui', '-g')
             foreach ($target in $instructionTargets) { $triggerArgs += @('--target', $target) }
             Invoke-Skillshare @triggerArgs
+        }
+        if (!($extras | Where-Object { $_.name -eq 'patches' })) {
+            Invoke-Skillshare extras init patches --target "$env:USERPROFILE\.agents\patches" --mode copy --no-tui -g
         }
         # Read once; install atomically replaces this live, Git-tracked metadata.
         $records = Read-Metadata $metadata

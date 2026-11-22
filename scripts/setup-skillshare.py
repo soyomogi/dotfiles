@@ -130,7 +130,7 @@ def setup(repo, home):
     link(repo / ".obsidian/plugins/skillshare-ui/theme.css", ui / "theme.css")
     link(shared / "config.yaml", local / "config.yaml")
     link(shared / ".skillignore", live / ".skillignore")
-    for name in ("soyomogi", "trigger"):
+    for name in ("soyomogi", "trigger", "patches"):
         link(shared / "extras" / name, local / "extras" / name)
 
 
