@@ -1,8 +1,8 @@
 [
-  {"action": "sendHexCode", "actionArg": "02 70", "alt": false, "ctrl": false, "key": "{", "meta": true, "platform": "darwin", "shift": true},
-  {"action": "sendHexCode", "actionArg": "02 70", "alt": false, "ctrl": false, "key": "[", "meta": true, "platform": "darwin", "shift": true},
-  {"action": "sendHexCode", "actionArg": "02 6e", "alt": false, "ctrl": false, "key": "}", "meta": true, "platform": "darwin", "shift": true},
-  {"action": "sendHexCode", "actionArg": "02 6e", "alt": false, "ctrl": false, "key": "]", "meta": true, "platform": "darwin", "shift": true},
+  {"action": "sendHexCode", "actionArg": "02 2c", "alt": false, "ctrl": false, "key": "{", "meta": true, "platform": "darwin", "shift": true},
+  {"action": "sendHexCode", "actionArg": "02 2c", "alt": false, "ctrl": false, "key": "[", "meta": true, "platform": "darwin", "shift": true},
+  {"action": "sendHexCode", "actionArg": "02 2e", "alt": false, "ctrl": false, "key": "}", "meta": true, "platform": "darwin", "shift": true},
+  {"action": "sendHexCode", "actionArg": "02 2e", "alt": false, "ctrl": false, "key": "]", "meta": true, "platform": "darwin", "shift": true},
   {"action": "sendEscapeSequence", "actionArg": "\r", "alt": false, "ctrl": false, "key": "Enter", "meta": false, "platform": null, "shift": true},
   {"action": "scrollPages", "actionArg": -1, "alt": false, "ctrl": false, "key": "PageUp", "meta": false, "platform": null, "shift": false},
   {"action": "scrollPages", "actionArg": 1, "alt": false, "ctrl": false, "key": "PageDown", "meta": false, "platform": null, "shift": false},

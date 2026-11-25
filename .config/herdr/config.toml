@@ -9,8 +9,8 @@ prompt_new_tab_name = false
 [keys]
 next_tab = "prefix+n"
 previous_tab = "prefix+p"
-previous_workspace = ["prefix+comma", "cmd+alt+up"]
-next_workspace = ["prefix+period", "cmd+alt+down"]
+previous_workspace = ["prefix+comma", "cmd+shift+["]
+next_workspace = ["prefix+period", "cmd+shift+]"]
 switch_workspace = ["prefix+alt+1..9", "ctrl+1..9"]
 next_agent = "ctrl+alt+down"
 previous_agent = "ctrl+alt+up"
