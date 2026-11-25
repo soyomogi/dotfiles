@@ -3,9 +3,21 @@ onboarding = false
 [theme]
 name = "rose-pine"
 
+[ui]
+prompt_new_tab_name = false
+
 [keys]
 next_tab = "prefix+n"
 previous_tab = "prefix+p"
+previous_workspace = ["prefix+comma", "cmd+alt+up"]
+next_workspace = ["prefix+period", "cmd+alt+down"]
+switch_workspace = ["prefix+alt+1..9", "ctrl+1..9"]
 next_agent = "ctrl+alt+down"
 previous_agent = "ctrl+alt+up"
 last_pane = "prefix+backspace"
+
+[[keys.command]]
+key = "prefix+f"
+type = "shell"
+command = 'sh "$HOME/.config/herdr/open-files.sh"'
+description = "Open a narrow Files split"

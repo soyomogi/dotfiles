@@ -104,5 +104,15 @@ precmd_functions=(${precmd_functions:#_herdr_refresh_tab_name})
 precmd_functions=(${precmd_functions:#_herdr_refresh_context})
 precmd_functions+=(_herdr_refresh_context)
 
+if [[ ${HERDR_ENV:-} == 1 && -n ${HERDR_SOCKET_PATH:-} && -n ${HERDR_PANE_ID:-} ]] &&
+   command -v jq >/dev/null; then
+  _herdr_rename_root=$("${HERDR_BIN_PATH:-herdr}" plugin list --plugin herdr-automatic-rename --json 2>/dev/null |
+    jq -r '.result.plugins[]? | select(.enabled) | .plugin_root')
+  if [[ -n $_herdr_rename_root && -r "$_herdr_rename_root/shell/hook.zsh" ]]; then
+    source "$_herdr_rename_root/shell/hook.zsh"
+  fi
+  unset _herdr_rename_root
+fi
+
 # starship
 eval "$(starship init zsh)"

@@ -10,6 +10,7 @@ NVIM="$CFG/nvim"
 LGIT="$CFG/lazygit"
 STARSHIP="$CFG/starship.toml"
 HERDR="$CFG/herdr"
+HERDR_APP="$CFG/herdr-app"
 GIT_CONFIG="$CFG/git/config"
 VIM="$HOME/.vim"
 VCOL="$VIM/colors"
@@ -17,10 +18,27 @@ VCOL="$VIM/colors"
 # ====== 関数 ======
 # link <dst> <src>
 link() {
+  if [ -L "$1" ] && [ "$(readlink "$1")" = "$2" ]; then
+    return 0
+  fi
   rm -rf "$1"
   mkdir -p "$(dirname "$1")"
   ln -s "$2" "$1"
   printf 'link: %s -> %s\n' "$1" "$2"
+}
+
+# link_with_backup <dst> <src>
+link_with_backup() {
+  local backup
+  if [ -L "$1" ] && [ "$(readlink "$1")" = "$2" ]; then
+    return 0
+  fi
+  if { [ -e "$1" ] || [ -L "$1" ]; } && ! cmp -s "$1" "$2"; then
+    backup=$(mktemp -d "$1.backup.XXXXXX")
+    mv "$1" "$backup/"
+    printf 'saved: %s/%s\n' "$backup" "$(basename "$1")"
+  fi
+  link "$1" "$2"
 }
 
 # fetch_if_missing <url> <dst>
@@ -78,7 +96,22 @@ link "$NVIM" "$GITDIR/.config/nvim"
 link "$LGIT" "$GITDIR/.config/lazygit"
 link "$STARSHIP" "$GITDIR/.config/starship.toml"
 link "$HERDR/config.toml" "$GITDIR/.config/herdr/config.toml"
+link "$HERDR/open-files.sh" "$GITDIR/.config/herdr/open-files.sh"
+link "${XDG_CONFIG_HOME:-$CFG}/herdr-automatic-rename/config.sh" \
+  "$GITDIR/.config/herdr-automatic-rename/config.sh"
 link "$GIT_CONFIG" "$GITDIR/.config/git/config"
+
+# The App keymap uses macOS shortcuts.
+if [ "$(uname -s)" = Darwin ]; then
+  APP_SOURCE="$GITDIR/.config/herdr-app"
+  for mod in tui-prefix files-shortcut; do
+    link_with_backup "$HERDR_APP/mods/$mod/main.js" "$APP_SOURCE/mods/$mod/main.js"
+    link_with_backup "$HERDR_APP/mods/$mod/mod.json" "$APP_SOURCE/mods/$mod/mod.json"
+  done
+  link "$HERDR_APP/layouts/soyomogi.json" "$APP_SOURCE/layouts/soyomogi.json"
+  link "$HERDR_APP/themes/pink.json" "$APP_SOURCE/themes/pink.json"
+  link "$HERDR_APP/keys.json" "$APP_SOURCE/keys.json"
+fi
 
 # vim カラースキーム
 mkdir -p "$VCOL"
@@ -87,12 +120,15 @@ fetch_if_missing "https://raw.githubusercontent.com/tomasr/molokai/master/colors
 fetch_if_missing "https://raw.githubusercontent.com/tssm/fairyfloss.vim/master/colors/fairyfloss.vim" \
   "$VCOL/fairyfloss.vim"
 
-# Obsidian plugin and custom CSS. The vault root comes from
+# Obsidian plugin, custom CSS, and Terminal key mappings. The vault root comes from
 # $OBSIDIAN_ROOT; unset means this machine has no deployment.
 if [ -n "${OBSIDIAN_ROOT:-}" ] && [ -d "$OBSIDIAN_ROOT/.obsidian" ]; then
   OBS_CFG="$OBSIDIAN_ROOT/.obsidian"
   copy "$OBS_CFG/plugins/skillshare-ui" "$GITDIR/.obsidian/plugins/skillshare-ui"
   copy "$OBS_CFG/snippets/soyomogi.css" "$GITDIR/.obsidian/snippets/soyomogi.css"
+  if [ -f "$OBS_CFG/plugins/terminal/manifest.json" ]; then
+    python3 "$GITDIR/scripts/setup-obsidian-terminal.py" "$OBSIDIAN_ROOT"
+  fi
 else
   printf 'skip: OBSIDIAN_ROOT is not set to an Obsidian vault\n'
 fi
