@@ -19,7 +19,7 @@ def update_file(destination, mappings):
         if destination.exists()
         else {}
     )
-    if settings.get("keymappings") == mappings:
+    if settings.get("keymappings") == mappings and not destination.is_symlink():
         return
     settings["keymappings"] = mappings
     with tempfile.NamedTemporaryFile(
