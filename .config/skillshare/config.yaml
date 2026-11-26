@@ -83,6 +83,16 @@ extras:
       - path: ~/.agents/skills/obsidian-notes
         mode: append
         as: SKILL.md
+  - name: patches-domain-modeling
+    source: ~/.config/skillshare/extras/patches
+    file: domain-modeling.md
+    targets:
+      - path: ~/.claude/skills/domain-modeling
+        mode: append
+        as: SKILL.md
+      - path: ~/.agents/skills/domain-modeling
+        mode: append
+        as: SKILL.md
   - name: memory
     targets: []
 
