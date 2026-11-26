@@ -127,6 +127,58 @@ if ($Install) {
             & $cli @args
             if ($LASTEXITCODE) { throw "Skillshare failed: $args" }
         }
+        # Read once; install atomically replaces this live, Git-tracked metadata.
+        $records = Read-Metadata $metadata
+        foreach ($property in $records.entries.PSObject.Properties | Sort-Object Name) {
+            $entry = $property.Value
+            if (!$entry.repo_url -and !$entry.tracked) { continue }
+            $key = $property.Name
+            if ($entry.group -and !$key.StartsWith($entry.group + '/')) { $key = $entry.group + '/' + $key }
+            $parts = $key -split '/'
+            $command = @('install', $entry.source, '--name', $parts[-1], '--update', '-g')
+            if ($parts.Count -gt 1) { $command += @('--into', ($parts[0..($parts.Count-2)] -join '/')) }
+            if ($entry.tracked) { $command += '--track'; $revision = $entry.branch }
+            else { $command += '--all'; $revision = if ($entry.commit) { $entry.commit } else { $entry.branch } }
+            if ($revision) { $command += @('--branch', $revision) }
+            Invoke-Skillshare @command
+        }
+        $gitHome = Get-Item (Join-Path $env:USERPROFILE 'git') -Force -ErrorAction SilentlyContinue
+        $gitRoot = if ($gitHome.LinkType) { @($gitHome.Target)[0] } else { Join-Path $env:USERPROFILE 'git' }
+        $source = Join-Path $gitRoot 'skills\skills'
+        $link = Join-Path $live 'soyomogi'
+        if (Test-Path -LiteralPath $source -PathType Container) {
+            $item = Get-Item -LiteralPath $link -Force -ErrorAction SilentlyContinue
+            if (!$item) { Invoke-Skillshare link $source --name soyomogi --enable -g }
+            else {
+                if (!$item.LinkType) { throw "$link already exists" }
+                $target = @($item.Target)[0]
+                if (![IO.Path]::IsPathRooted($target)) { $target = Join-Path $item.Parent.FullName $target }
+                $target = [IO.Path]::GetFullPath($target)
+                if ($target -ne [IO.Path]::GetFullPath($source)) {
+                    $legacy = Join-Path $gitRoot 'skills\.agents\skills'
+                    if ($target -ne [IO.Path]::GetFullPath($legacy)) {
+                        throw "$link already points elsewhere"
+                    }
+                    $backupName = '.soyomogi-' + [guid]::NewGuid()
+                    $backupLink = Join-Path $live $backupName
+                    Rename-Item -LiteralPath $link -NewName $backupName
+                    try {
+                        New-Item -ItemType Junction -Path $link -Target $source | Out-Null
+                    } catch {
+                        Rename-Item -LiteralPath $backupLink -NewName 'soyomogi'
+                        throw
+                    }
+                    [IO.Directory]::Delete($backupLink)
+                }
+            }
+        } else { Write-Host "skip: local skills are not prepared in $source" }
+        $targets = ((Invoke-Skillshare target list --json -g) -join "`n") | ConvertFrom-Json
+        foreach ($target in $targets.targets) {
+            if ($target.skillsEnabled -and $target.mode -ne 'copy') {
+                Invoke-Skillshare target $target.name --mode copy -g
+            }
+        }
+        Invoke-Skillshare sync -g
         $extras = ((Invoke-Skillshare extras list --json -g) -join "`n") | ConvertFrom-Json
         $personal = $extras | Where-Object { $_.name -eq 'soyomogi' -and $_.file -eq 'AGENTS.md' }
         if ($personal -and !($extras | Where-Object { $_.name -eq 'trigger' })) {
@@ -145,35 +197,6 @@ if ($Install) {
         if (!($extras | Where-Object { $_.name -eq 'patches' })) {
             Invoke-Skillshare extras init patches --target "$env:USERPROFILE\.agents\patches" --mode copy --no-tui -g
         }
-        # Read once; install atomically replaces this live, Git-tracked metadata.
-        $records = Read-Metadata $metadata
-        foreach ($property in $records.entries.PSObject.Properties | Sort-Object Name) {
-            $entry = $property.Value
-            if (!$entry.repo_url -and !$entry.tracked) { continue }
-            $key = $property.Name
-            if ($entry.group -and !$key.StartsWith($entry.group + '/')) { $key = $entry.group + '/' + $key }
-            $parts = $key -split '/'
-            $command = @('install', $entry.source, '--name', $parts[-1], '--update', '-g')
-            if ($parts.Count -gt 1) { $command += @('--into', ($parts[0..($parts.Count-2)] -join '/')) }
-            if ($entry.tracked) { $command += '--track'; $revision = $entry.branch }
-            else { $command += '--all'; $revision = if ($entry.commit) { $entry.commit } else { $entry.branch } }
-            if ($revision) { $command += @('--branch', $revision) }
-            Invoke-Skillshare @command
-        }
-        $gitHome = Get-Item (Join-Path $env:USERPROFILE 'git') -Force -ErrorAction SilentlyContinue
-        $gitRoot = if ($gitHome.LinkType) { @($gitHome.Target)[0] } else { Join-Path $env:USERPROFILE 'git' }
-        $apm = Join-Path $gitRoot 'skills\.agents\skills'
-        $link = Join-Path $live 'soyomogi'
-        if (Test-Path -LiteralPath $apm) {
-            if (!(Test-Path -LiteralPath $link)) { Invoke-Skillshare link $apm --name soyomogi --enable -g }
-            else {
-                $item = Get-Item -LiteralPath $link -Force
-                if (!$item.LinkType -or [IO.Path]::GetFullPath(@($item.Target)[0]) -ne [IO.Path]::GetFullPath($apm)) {
-                    throw "$link already points elsewhere"
-                }
-            }
-        } else { Write-Host 'skip: APM skills are not prepared in ~/git/skills/.agents/skills' }
-        Invoke-Skillshare sync -g
         Invoke-Skillshare sync extras -g
     } finally {
         if ($null -eq $previousDebug) { Remove-Item Env:GODEBUG -ErrorAction SilentlyContinue }

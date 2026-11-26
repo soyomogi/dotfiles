@@ -11,10 +11,12 @@ mode: merge
 targets:
   claude:
     skills:
+      mode: copy
       path: ~/.claude/skills
       target_naming: standard
   universal:
     skills:
+      mode: copy
       path: ~/.agents/skills
       target_naming: standard
 

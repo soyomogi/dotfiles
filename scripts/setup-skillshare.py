@@ -48,7 +48,7 @@ def install(path):
     metadata = load(path)
     for key, entry in sorted(metadata["entries"].items()):
         if not entry.get("repo_url") and not entry.get("tracked"):
-            continue  # Local skills, including APM, are prepared separately.
+            continue  # Local skills are linked separately.
         relative = PurePosixPath(key)
         group = entry.get("group", "")
         if group and not key.startswith(group + "/"):
@@ -142,7 +142,7 @@ def setup_wsl(home, windows_root):
     if not exists(config):
         config.write_text(json.dumps({
             "sources": {name: str(windows_root / name) for name in ("skills", "agents", "extras")},
-            "mode": "merge", "follow_source_links": True,
+            "mode": "copy", "follow_source_links": True,
             "targets": {"universal": {"skills": {
                 "path": str(home / ".agents/skills"), "target_naming": "standard",
             }}},
@@ -170,22 +170,46 @@ def setup_windows_from_wsl(repo, home, restore):
     windows_root = Path(subprocess.check_output(["wslpath", "-u", native_root], text=True).strip())
     setup_wsl(home, windows_root)
     if restore:
-        subprocess.run(["skillshare", "sync", "-g"], check=True)
+        sync_skills()
+
+
+def link_local_skills(home):
+    checkout = home / "git/skills"
+    source = checkout / "skills"
+    link = home / ".config/skillshare/skills/soyomogi"
+    if not source.is_dir():
+        print(f"skip: local skills are not prepared in {source}")
+        return
+    if not exists(link):
+        subprocess.run(["skillshare", "link", str(source), "--name", "soyomogi", "--enable", "-g"], check=True)
+        return
+    if not link.is_symlink():
+        raise ValueError(f"{link} already exists")
+    if link.resolve() == source.resolve():
+        return
+    if link.resolve() != (checkout / ".agents/skills").resolve():
+        raise ValueError(f"{link} already points elsewhere")
+
+    # Publish the replacement without interrupting readers of the source.
+    with tempfile.TemporaryDirectory(prefix=".soyomogi-", dir=link.parent) as temporary:
+        replacement = Path(temporary) / "soyomogi"
+        replacement.symlink_to(source, target_is_directory=True)
+        replacement.replace(link)
+    print(f"link: {link} -> {source}")
+
+
+def sync_skills():
+    settings = subprocess.check_output(["skillshare", "target", "list", "--json", "-g"], text=True)
+    for target in json.loads(settings)["targets"]:
+        if target["skillsEnabled"] and target["mode"] != "copy":
+            subprocess.run(["skillshare", "target", target["name"], "--mode", "copy", "-g"], check=True)
+    subprocess.run(["skillshare", "sync", "-g"], check=True)
 
 
 def install_and_sync(repo, home):
     install(repo / ".config/skillshare/skills/.metadata.json")
-    apm = home / "git/skills/.agents/skills"
-    link = home / ".config/skillshare/skills/soyomogi"
-    if apm.is_dir():
-        if exists(link):
-            if not link.is_dir() or link.resolve() != apm.resolve():
-                raise ValueError(f"{link} already points elsewhere")
-        else:
-            subprocess.run(["skillshare", "link", str(apm), "--name", "soyomogi", "-g"], check=True)
-    else:
-        print("skip: APM skills are not prepared in ~/git/skills/.agents/skills")
-    subprocess.run(["skillshare", "sync", "-g"], check=True)
+    link_local_skills(home)
+    sync_skills()
     subprocess.run(["skillshare", "sync", "extras", "-g"], check=True)
 
 

@@ -1,4 +1,1 @@
-# Direct GitHub installs supply these skills; keep APM copies local.
-soyomogi/herdr
-soyomogi/obsidian-cli
-soyomogi/obsidian-markdown
+# Skills excluded from global sync.

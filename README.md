@@ -1,44 +1,49 @@
 # dotfiles
 
-## 事前準備
+## 基本設定
 
-Herdr TUI の Files と自動改名を使う場合は、`jq` を用意してプラグインを入れる。
+```sh
+bash init.sh
+```
+
+Obsidian プラグインとスニペットを配置する場合は、`OBSIDIAN_ROOT` に Vault のルートを指定して実行する。Terminal プラグインのキー設定も反映する場合は、Obsidian を終了してから実行する。Obsidian を開いたまま Terminal のキー設定だけを反映する場合は、次を実行する。
+
+```sh
+python3 scripts/setup-obsidian-terminal.py --live "$OBSIDIAN_ROOT"
+```
+
+## Herdr
+
+Herdr TUI の Files とタブの自動改名を使う場合は、`jq` と次のプラグインをインストールする。
 
 ```sh
 herdr plugin install smarzban/herdr-file-viewer
 herdr plugin install qu8n/herdr-automatic-rename
 ```
 
-Herdr App の `soyomogi` レイアウトを使うには、Herdsidian と skillshare の mod を別途導入する。
+Files は `Ctrl+B` → `f` で開く。設定を適用した zsh はコマンドの開始・終了時にタブ名を更新する。
 
-## 基本設定の配置
+macOS では `init.sh` が Herdr App のレイアウトとキー設定も配置する。`soyomogi` レイアウトには Herdsidian と skillshare の mod が必要。
 
-```sh
-bash init.sh
-```
+## skillshare の設定と同期
 
-Obsidian プラグインとスニペットも配置する場合は、実行時に `OBSIDIAN_ROOT` に Vault のルートを指定する。
+skillshare をインストールする。自作スキルを同期する場合は `soyomogi/skills` を `~/git/skills` にクローンする。セットアップは `~/git/skills/skills` を同期元にする。既存の `soyomogi` リンクが旧 APM 展開先の `~/git/skills/.agents/skills`を指している場合は、実行時に付け替える。
 
-macOS では、Herdr App の初回起動前にも `soyomogi` レイアウトとキー設定を配置できる。
-
-Terminal プラグインが入っている Vault には、`.obsidian/plugins/terminal/keymappings.json` の割り当ても配置する。Obsidian を終了してから `init.sh` を実行するか、開いている Vault には Obsidian CLI で反映する。
-
-```sh
-python3 scripts/setup-obsidian-terminal.py --live "$OBSIDIAN_ROOT"
-```
-
-Herdr TUI で `Ctrl+B` → `f` を押すと、Files が右側に約40列の分割ペインで開く。新しく開く zsh では、コマンドの開始・終了時にタブ名を更新する。
-
-## skillshare の設定とスキルの復元・同期
-
-Python と skillshare が必要。自作スキルは `soyomogi/skills` を `~/git/skills` に用意してから配置する。
-
-```sh
-(cd ~/git/skills && apm install --target codex)
-```
+macOS・Linux・Termux・WSL では Python 版を実行する。
 
 ```sh
 python3 scripts/setup-skillshare.py --install
 ```
 
-配置だけなら `--install` を省略する。
+Windows の PowerShell では Windows 版を実行する。
+
+```powershell
+.\scripts\setup-skillshare-windows.ps1 -Install
+```
+
+設定の配置だけ行う場合は、`--install` または `-Install` を省く。セットアップは `copy` モードでスキルを同期し、extras を配布先のコピーに適用する。自作スキルの編集後は次の順で同期する。
+
+```sh
+skillshare sync -g
+skillshare sync extras -g
+```
