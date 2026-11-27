@@ -75,6 +75,16 @@ extras:
       - path: ~/.agents/skills/pr
         mode: append
         as: SKILL.md
+  - name: patches-to-tickets
+    source: ~/.config/skillshare/extras/patches
+    file: to-tickets.md
+    targets:
+      - path: ~/.claude/skills/to-tickets
+        mode: append
+        as: SKILL.md
+      - path: ~/.agents/skills/to-tickets
+        mode: append
+        as: SKILL.md
   - name: patches-obsidian-notes
     source: ~/.config/skillshare/extras/patches
     file: obsidian-notes.md
