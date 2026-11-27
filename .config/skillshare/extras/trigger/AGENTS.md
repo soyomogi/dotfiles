@@ -1,5 +1,9 @@
 ## 条件付き指示
 
+### 管理中の作業の進捗更新
+
+管理中の作業では、作業記録と該当するタスクの状態を進捗に合わせて更新し、報告時点で現状と残作業の再開に必要な情報が記録に揃っている状態にする。
+
 ### Herdr での作業対象の特定
 
 Herdr 環境（`HERDR_ENV=1`）では、環境変数 `HERDR_TAB_NAME`・`HERDR_PANE_NAME` のタブ名・ペイン名を、現在の作業対象を特定する手がかりにする。ユーザーが対象を明示した場合は、その指定を優先する。
@@ -8,9 +12,9 @@ Herdr 環境（`HERDR_ENV=1`）では、環境変数 `HERDR_TAB_NAME`・`HERDR_P
 
 Herdr 環境（`HERDR_ENV=1`）で委譲先の指定がない場合は、`$herdr` を参照し、現在の workspace の `🤖` タブで委譲先を探す。Herdr のエージェントへ送る場合は、`$herdr` の手順で送る。
 
-### handoff の保存先
+### 引き継ぎ文書の保存先
 
-`handoff` を実行するときは、スキルの保存先指定に優先して、引き継ぎ文書を Obsidian Vault の `handoff/`（`$OBSIDIAN_ROOT/handoff/`）に保存する。
+引き継ぎ文書を作るときは、保存先の指定がなければ、Obsidian Vault の `handoff/`（`$OBSIDIAN_ROOT/handoff/`）に保存する。明示的に `handoff` を実行した場合も、この保存先をスキルの既定より優先する。
 
 ### ローカルの読み戻し確認
 
