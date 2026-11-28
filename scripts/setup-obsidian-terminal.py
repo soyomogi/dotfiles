@@ -43,8 +43,11 @@ def update_running_plugin(vault, mappings):
         raise SystemExit("Obsidian CLI is required for --live.")
     expected_path, desired = json.dumps(str(vault)), json.dumps(mappings)
     code = f"""
-const path = window.require("node:fs").realpathSync;
-if (path(app.vault.adapter.getBasePath()) !== path({expected_path})) {{
+const fs = window.require("node:fs");
+// The same directory can have different Unicode spellings on macOS.
+const actual = fs.statSync(app.vault.adapter.getBasePath(), {{ bigint: true }});
+const expected = fs.statSync({expected_path}, {{ bigint: true }});
+if (actual.dev !== expected.dev || actual.ino !== expected.ino) {{
   return "wrong-vault";
 }}
 const settings = app.plugins.plugins.terminal?.settings;
